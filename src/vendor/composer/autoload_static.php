@@ -13,6 +13,7 @@ class ComposerStaticInit9bbe39e12894a82b068f0a0890c790ed
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -23,6 +24,10 @@ class ComposerStaticInit9bbe39e12894a82b068f0a0890c790ed
         'W' => 
         array (
             'Webmozart\\Assert\\' => 17,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
         ),
         'P' => 
         array (
@@ -42,8 +47,13 @@ class ComposerStaticInit9bbe39e12894a82b068f0a0890c790ed
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
         ),
+        'C' => 
+        array (
+            'CBOR\\' => 5,
+        ),
         'B' => 
         array (
+            'Brick\\Math\\' => 11,
             'Blockfrost\\' => 11,
         ),
     );
@@ -58,6 +68,10 @@ class ComposerStaticInit9bbe39e12894a82b068f0a0890c790ed
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -95,6 +109,14 @@ class ComposerStaticInit9bbe39e12894a82b068f0a0890c790ed
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'CBOR\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spomky-labs/cbor-php/src',
+        ),
+        'Brick\\Math\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/brick/math/src',
         ),
         'Blockfrost\\' => 
         array (

@@ -5,7 +5,8 @@
 	"license": "Apache-2.0",
 	
 	"require" : {
-		"guzzlehttp/guzzle" : "^7.0"
+		"guzzlehttp/guzzle" : "^7.0",
+		"spomky-labs/cbor-php": "v2.1.x-dev"
 	},
 	"autoload" : {
 		"psr-4" : {
