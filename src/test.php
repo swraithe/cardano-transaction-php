@@ -72,7 +72,31 @@ try {
                                 )
                               
                         ])
+                    ]),
+                    ListObject::create([
+                        ByteStringObject::create($wallet_receiver),
+                        ListObject::create([
+                            UnsignedIntegerObject::create($output_amount),
+                            MapObject::create()
+                                ->add(ByteStringObject::create(hex2bin('afc910d7a306d20c12903979d4935ae4307241d03245743548e76783')),
+                                    MapObject::create()
+                                        ->add(ByteStringObject::create('ASHIB'),
+                                        UnsignedIntegerObject::create(16))    
+                                )
+                                ->add(ByteStringObject::create(hex2bin('b24a29b9c16d349df16d9b5553b119e399e46ae19d6150c1a843ef61')),
+                                    MapObject::create()
+                                        ->add(ByteStringObject::create('didits'),
+                                        UnsignedIntegerObject::create(16))    
+                                )
+                                ->add(ByteStringObject::create(hex2bin('c68307e7ca850513507f1498862a57c7f4fae7ba8e84b8bc074093a9')),
+                                    MapObject::create()
+                                        ->add(ByteStringObject::create('DIBS'),
+                                        UnsignedIntegerObject::create(16))    
+                                )
+                              
+                        ])
                     ])
+
                 ])
                                 
             )
