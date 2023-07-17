@@ -1,88 +1,346 @@
-[![Build status](https://github.com/blockfrost/blockfrost-php/actions/workflows/php.yml/badge.svg)](https://github.com/blockfrost/blockfrost-php/actions/workflows/php.yml)
+#[PHP] Generate Cardano trx and submit to blockchain
+
+Build the unsigned transaction data for eternl wallet, Cardano
+
+ADA + ASHIB + DIBS
+
+#SDK
+blockfrost-php + CBOR for PHP
+
+CBOR for PHP
+============
+
+![Build Status](https://github.com/Spomky-Labs/cbor-php/workflows/Unit%20and%20Functional%20Tests/badge.svg)
+![Build Status](https://github.com/Spomky-Labs/cbor-php/workflows/Mutation%20Testing/badge.svg)
+
+![Coding Standards](https://github.com/Spomky-Labs/cbor-php/workflows/Coding%20Standards/badge.svg)
+![Static Analyze](https://github.com/Spomky-Labs/cbor-php/workflows/Static%20Analyze/badge.svg)
+
+[![Latest Stable Version](https://poser.pugx.org/Spomky-Labs/cbor-php/v)](//packagist.org/packages/Spomky-Labs/cbor-php)
+[![Total Downloads](https://poser.pugx.org/Spomky-Labs/cbor-php/downloads)](//packagist.org/packages/Spomky-Labs/cbor-php)
+[![Latest Unstable Version](https://poser.pugx.org/Spomky-Labs/cbor-php/v/unstable)](//packagist.org/packages/Spomky-Labs/cbor-php)
+[![License](https://poser.pugx.org/Spomky-Labs/cbor-php/license)](//packagist.org/packages/Spomky-Labs/cbor-php)
+
+# Scope
+
+This library will help you to decode and create objects using the Concise Binary Object Representation (CBOR - [RFC8949](https://tools.ietf.org/html/rfc8949)).
+
+# Installation
+
+Install the library with Composer: `composer require spomky-labs/cbor-php`.
+
+This project follows the [semantic versioning](http://semver.org/) strictly.
 
 
-<img src="https://blockfrost.io/images/logo.svg" width="250" align="right" height="90">
+# Documentation
 
-# blockfrost-php
+## Object Creation
 
-<br/>
+This library supports all Major Types defined in the RFC8949 and has capabilities to support any kind of Tags (Major Type 6) and Other Objects (Major Type 7).
 
-<p align="center">PHP SDK for Blockfrost.io API.</p>
-<p align="center">
-  <a href="#getting-started">Getting started</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage</a>
-</p>
-<br>
+Each object have at least:
 
-## Getting started
+* a static method `create`. This method will correctly instantiate the object.
+* can be converted into a binary string: `$object->__toString();` or `(string) $object`.
 
-To use this SDK, you first need login into to [blockfrost.io](https://blockfrost.io) create your project to retrive your API token.
-
-<img src="https://i.imgur.com/smY12ro.png">
-
-<br/>
-
-## Installation
-
-###  Composer
-
-This SDK uses guzzlehttp for REST.  [Composer](https://getcomposer.org/) is the preferred package manager to import this:
-
-###  composer.json
-
-```json
-{
-	"require" : {
-		"guzzlehttp/guzzle" : "^7.0"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"Blockfrost\\" 		  : "../blockfrost_api/"
-		}
-	},
-	"minimum-stability" : "dev",
-	"require-dev": {
-		"phpunit/phpunit": "^9.5"
-	}
-}
-```
-
-```console
-$ php composer.phar update
-```
-
-## Usage
-
-Using the SDK is pretty straight-forward as you can see from the following example.
-
-### Cardano
+### Positive Integer (Major Type 0)
 
 ```php
-<?php 
+<?php
 
-use Blockfrost\Block\BlockService;
-use Blockfrost\Service;
+use CBOR\UnsignedIntegerObject;
 
-require __DIR__.'/vendor/autoload.php';
+$object = UnsignedIntegerObject::create(10);
+$object = UnsignedIntegerObject::create(1000);
+$object = UnsignedIntegerObject::create(10000);
+$object = UnsignedIntegerObject::createFromHex('0AFFEBFF');
 
-$projectId = "MY_PROJECT_ID";
-
-$blockService = new BlockService(Service::$NETWORK_CARDANO_MAINNET, $projectId);
-
-try
-{
-    $res = $blockService->getLatestBlock();
-
-    echo $res->hash;
-}
-
-catch(Exception $err)
-{
-    echo $err->getMessage();
-}
-
-
-?>
+echo bin2hex((string)$object); // 1a0affebff
 ```
+
+### Negative Integer (Major Type 1)
+
+```php
+<?php
+
+use CBOR\NegativeIntegerObject;
+
+$object = NegativeIntegerObject::create(-10);
+$object = NegativeIntegerObject::create(-1000);
+$object = NegativeIntegerObject::create(-10000);
+```
+
+### Byte String / Indefinite Length Byte String (Major Type 2)
+
+Byte String and Indefinite Length Byte String objects have the same major type but are handled by two different classes in this library.
+
+```php
+<?php
+
+use CBOR\ByteStringObject; // Byte String
+use CBOR\IndefiniteLengthByteStringObject; // Indefinite Length Byte String
+
+// Create a Byte String with value "Hello"
+$object = ByteStringObject::create('Hello');
+
+// Create an Indefinite Length Byte String with value "Hello" ("He" + "" + "ll" + "o")
+$object = IndefiniteLengthByteStringObject::create()
+    ->append('He')
+    ->append('')
+    ->append('ll')
+    ->append('o')
+;
+```
+
+### Text String / Indefinite Length Text String (Major Type 3)
+
+Text String and Indefinite Length Text String objects have the same major type but are handled by two different classes in this library.
+
+```php
+<?php
+
+use CBOR\TextStringObject; // Text String
+use CBOR\IndefiniteLengthTextStringObject; // Indefinite Length Text String
+
+// Create a Text String with value "(｡◕‿◕｡)⚡"
+$object = TextStringObject::create('(｡◕‿◕｡)⚡');
+
+// Create an Indefinite Length Text String with value "(｡◕‿◕｡)⚡" ("(｡◕" + "" + "‿◕" + "｡)⚡")
+$object = IndefiniteLengthTextStringObject::create()
+    ->append('(｡◕')
+    ->append('')
+    ->append('‿◕')
+    ->append('｡)⚡')
+;
+```
+
+### List / Indefinite Length List (Major Type 4)
+
+List and Indefinite Length List objects have the same major type but are handled by two different classes in this library.
+Items in the List object can be any of CBOR Object type.
+
+```php
+<?php
+
+use CBOR\ListObject; // List
+use CBOR\IndefiniteLengthListObject; // Infinite List
+use CBOR\TextStringObject;
+use CBOR\UnsignedIntegerObject;
+
+// Create a List with a single item
+$object = ListObject::create()
+    ->add(TextStringObject::create('(｡◕‿◕｡)⚡'))
+;
+
+// Create an Infinite List with several items
+$object = IndefiniteLengthListObject::create()
+    ->add(TextStringObject::create('(｡◕‿◕｡)⚡'))
+    ->add(UnsignedIntegerObject::create(25))
+;
+```
+
+### Map / Indefinite Length Map (Major Type 5)
+
+Map and Indefinite Length Map objects have the same major type but are handled by two different classes in this library.
+Keys and values in the Map object can be any of CBOR Object type.
+
+**However, be really careful with keys. Please follow the recommendation hereunder:**
+
+* Keys should not be duplicated
+* Keys should be of type Positive or Negative Integer, (Indefinite Length)Byte String or (Indefinite Length)Text String. Other types may cause errors.
+
+```php
+<?php
+
+use CBOR\MapObject; // Map
+use CBOR\IndefiniteLengthMapObject; // Infinite Map
+use CBOR\ByteStringObject;
+use CBOR\TextStringObject;
+use CBOR\UnsignedIntegerObject;
+use CBOR\NegativeIntegerObject;
+
+// Create a Map with a single item
+$object = MapObject::create()
+    ->add(UnsignedIntegerObject::create(25), TextStringObject::create('(｡◕‿◕｡)⚡'))
+;
+
+// Create an Infinite Map with several items
+$object = IndefiniteLengthMapObject::create()
+    ->append(ByteStringObject::create('A'), NegativeIntegerObject::create(-652))
+    ->append(UnsignedIntegerObject::create(25), TextStringObject::create('(｡◕‿◕｡)⚡'))
+;
+```
+
+### Tags (Major Type 6)
+
+This library can support any kind of tags.
+It comes with some of the thew described in the specification:
+
+* Base 16 encoding
+* Base 64 encoding
+* Base 64 Url Safe encoding
+* Big Float
+* Decimal Fraction
+* Epoch
+* Timestamp
+* Positive Big Integer
+* Negative Big Integer
+
+You can easily create your own tag by extending the abstract class `CBOR\TagObject`.
+This library provides a `CBOR\Tag\GenericTag` class that can be used for any other unknown/unsupported tags.
+
+```php
+<?php
+
+use CBOR\Tag\TimestampTag;
+use CBOR\UnsignedIntegerObject;
+
+// Create an unsigned object that represents the current timestamp
+$object = UnsignedIntegerObject::create(time()); // e.g. 1525873787
+
+//We tag the object with the Timestamp Tag
+$taggedObject = TimestampTag::create($object); // Returns a \DateTimeImmutable object with timestamp at 1525873787
+```
+
+### Other Objects (Major Type 7)
+
+This library can support any kind of "other objects".
+It comes with some of the thew described in the specification:
+
+* False
+* True
+* Null
+* Undefined
+* Half Precision Float
+* Single Precision Float
+* Double Precision Float
+* Simple Value
+
+You can easily create your own object by extending the abstract class `CBOR\OtherObject`.
+This library provides a `CBOR\OtherObject\GenericTag` class that can be used for any other unknown/unsupported objects.
+
+**Because PHP does not support an 'undefined' object, the normalization method will return `'undefined'`.**
+
+```php
+<?php
+
+use CBOR\OtherObject\FalseObject;
+use CBOR\OtherObject\NullObject;
+use CBOR\OtherObject\UndefinedObject;
+
+$object = FalseObject::create();
+$object = NullObject::create();
+$object = UndefinedObject::create();
+```
+
+## Example
+
+```php
+<?php
+
+use CBOR\MapObject;
+use CBOR\OtherObject\UndefinedObject;
+use CBOR\TextStringObject;
+use CBOR\ListObject;
+use CBOR\NegativeIntegerObject;
+use CBOR\UnsignedIntegerObject;
+use CBOR\OtherObject\TrueObject;
+use CBOR\OtherObject\FalseObject;
+use CBOR\OtherObject\NullObject;
+use CBOR\Tag\DecimalFractionTag;
+use CBOR\Tag\TimestampTag;
+
+$object = MapObject::create()
+    ->add(
+        TextStringObject::create('(｡◕‿◕｡)⚡'),
+        ListObject::create([
+            TrueObject::create(),
+            FalseObject::create(),
+            UndefinedObject::create(),
+            DecimalFractionTag::createFromExponentAndMantissa(
+                NegativeIntegerObject::create(-2),
+                UnsignedIntegerObject::create(1234)
+            ),
+        ])
+    )
+    ->add(
+        UnsignedIntegerObject::create(2000),
+        NullObject::create()
+    )
+    ->add(
+        TextStringObject::create('date'),
+        TimestampTag::create(UnsignedIntegerObject::create(1577836800))
+    )
+;
+```
+
+The encoded result will be `0xa37428efbda1e29795e280bfe29795efbda129e29aa183f5f4c482211904d21907d0f66464617465c11a5e0be100`.
+
+## Object Loading
+
+If you want to load a CBOR encoded string, you just have to instantiate a `CBOR\Decoder` class.
+This class does not need any argument.
+
+```php
+<?php
+
+use CBOR\Decoder;
+
+$decoder = Decoder::create();
+```
+
+If needed, you can define custom sets of Tag and Other Object support managers.
+
+```php
+<?php
+
+use CBOR\Decoder;
+use CBOR\OtherObject;
+use CBOR\Tag;
+
+$otherObjectManager = OtherObject\OtherObjectManager::create()
+    ->add(OtherObject\SimpleObject::class)
+    ->add(OtherObject\FalseObject::class)
+    ->add(OtherObject\TrueObject::class)
+    ->add(OtherObject\NullObject::class)
+    ->add(OtherObject\UndefinedObject::class)
+    ->add(OtherObject\HalfPrecisionFloatObject::class)
+    ->add(OtherObject\SinglePrecisionFloatObject::class)
+    ->add(OtherObject\DoublePrecisionFloatObject::class)
+;
+
+$tagManager = Tag\TagManager::create()
+    ->add(Tag\DatetimeTag::class)
+    ->add(Tag\TimestampTag::class)
+    ->add(Tag\UnsignedBigIntegerTag::class)
+    ->add(Tag\NegativeBigIntegerTag::class)
+    ->add(Tag\DecimalFractionTag::class)
+    ->add(Tag\BigFloatTag::class)
+    ->add(Tag\Base64UrlEncodingTag::class)
+    ->add(Tag\Base64EncodingTag::class)
+    ->add(Tag\Base16EncodingTag::class)
+;
+
+$decoder = Decoder::create($tagManager, $otherObjectManager);
+```
+
+Then, the decoder will read the data you want to load.
+The data has to be handled by an object that implements the `CBOR\Stream` interface.
+This library provides a `CBOR\StringStream` class to stream the string.
+
+```php
+<?php
+
+use CBOR\StringStream;
+
+// CBOR object (in hex for the example)
+$data = hex2bin('fb3fd5555555555555');
+
+// String Stream
+$stream = StringStream::create($data);
+
+// Load the data
+$object = $decoder->decode($stream); // Return a CBOR\OtherObject\DoublePrecisionFloatObject class with normalized value ~0.3333 (1/3)
+```
+
 
