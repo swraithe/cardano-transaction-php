@@ -2,6 +2,7 @@
 
 // Import required libraries
 require 'vendor/autoload.php';
+// include_once('simple_html_dom.php');
 
 use Blockfrost\Block\BlockService;
 use Blockfrost\Address\AddressesService;
@@ -18,21 +19,48 @@ use CBOR\ByteStringObject;
 use CBOR\NegativeIntegerObject;
 use CBOR\OtherObject\TrueObject;
 use CBOR\OtherObject\NullObject;
+use GuzzleHttp\Client;
 
 use function BitWasp\Bech32\decodeSegwit;
 use function BitWasp\Bech32\decodeRaw;
 use function BitWasp\Bech32\convertBits;
 
-$base58 = new StephenHill\Base58();
+// $base58 = new StephenHill\Base58();
 
 $projectId = "mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50";
 $addressService = new AddressesService(Service::$NETWORK_CARDANO_MAINNET, $projectId);
 
-// $wallet_sender = ("addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch");//addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch
-// // $wallet_receiver = hex2bin("3F5562403F772278673F3F3F3F3F3F5B3B4D70713F4B773F703F3F3F3F343F303F3F6F2E3F4B3F27202E20225C3022202E20275F3F4D000000");// contract of ADA
-// $wallet_receiver = hex2bin("01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0");
-// $res = $addressService->getAddressTransactions($wallet_sender);
-// echo $res->hash;
+function getHexAddress($wallet_address) {
+    $hex_address = '8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96';
+    // Replace 'your_api_key' with your actual Blockfrost API key
+    $api_key = 'mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50';
+
+    // Replace 'your_wallet_address' with the desired Cardano wallet address
+    $wallet_address = 'your_wallet_address';
+
+    // Build the API endpoint URL
+    $api_base_url = 'https://cardano-mainnet.blockfrost.io/api/v0';
+    $endpoint = "/addresses/{$wallet_address}";
+
+    // Make the HTTP request to the Blockfrost API
+    $client = new \GuzzleHttp\Client(['base_uri' => $api_base_url]);
+    $response = $client->request('GET', $endpoint, [
+        'headers' => [
+        'project_id' => $api_key,
+        ],
+    ]);
+
+    // Process the API response
+    if ($response->getStatusCode() === 200) {
+        $data = json_decode($response->getBody(), true);
+        $hex_address = $data['hex'];
+        echo "Hex address: " . $hex_address;
+    } else {
+         echo "Error fetching the address.";
+    }
+    return $hex_address;
+}
+// echo file_get_html('https://www.google.com/')->plaintext;
 
 //full wallet addres sender
 $wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
@@ -42,8 +70,9 @@ $hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d9
 // var_dump($res);
 
 $cardanoAddress = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
-$decoded = decodeRaw($cardanoAddress);
-var_dump( $decoded[1]);
+$hex_address = getHexAddress($cardanoAddress);
+var_dump($hex_address);
+
 
 //max transaction fee to pay (in lovelace)
 $max_fee = 200000;
