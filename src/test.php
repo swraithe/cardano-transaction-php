@@ -36,7 +36,7 @@ function getHexAddress($wallet_address) {
    
     if(count($titles) > 0){
         $hex_address = $titles[0]->textContent;//.PHP_EOL;
-        echo $hex_address;
+        echo $hex_address .PHP_EOL;
     }
     
     return hex2bin($hex_address);
@@ -45,7 +45,7 @@ function getHexAddress($wallet_address) {
 // testing scraping;
 $cardanoAddress = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
 $hex_address = getHexAddress($cardanoAddress);
-var_dump($hex_address);
+// var_dump($hex_address);
 
 //full wallet addres sender
 $wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
@@ -57,7 +57,6 @@ $max_fee = 200000;
 $ada_policyid = 'b24a29b9c16d349df16d9b5553b119e399e46ae19d6150c1a843ef61';
 //full wallet addres receiver #1 addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz
 $wallet_receiver_1 = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
-var_dump($wallet_receiver_1);
 
 //amount ada to send (in lovelace) to receiver #1
 $amount_ada_1 = 1500000;
