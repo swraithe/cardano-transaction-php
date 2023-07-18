@@ -3,6 +3,8 @@
 // Import required libraries
 require 'vendor/autoload.php';
 
+use Blockfrost\Block\BlockService;
+use Blockfrost\Address\AddressesService;
 use Blockfrost\Service;
 use CBOR\StringStream;
 use CBOR\Decoder;
@@ -17,18 +19,21 @@ use CBOR\NegativeIntegerObject;
 use CBOR\OtherObject\TrueObject;
 use CBOR\OtherObject\NullObject;
 
+$projectId = "mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50";
+$addressService = new AddressesService(Service::$NETWORK_CARDANO_MAINNET, $projectId);
+
 // $wallet_sender = ("addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch");//addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch
 // // $wallet_receiver = hex2bin("3F5562403F772278673F3F3F3F3F3F5B3B4D70713F4B773F703F3F3F3F343F303F3F6F2E3F4B3F27202E20225C3022202E20275F3F4D000000");// contract of ADA
 // $wallet_receiver = hex2bin("01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0");
-// var_dump($wallet_receiver);
+// $res = $addressService->getAddressTransactions($wallet_sender);
+// echo $res->hash;
 
-$hash = hex2bin("6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72");//
-$hash1 = hex2bin('6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72');//
-
-$output_data = 0xff;
 
 //full wallet addres sender
 $wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
+$hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//
+// $hash = hex2bin('6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72');//
+
 //max transaction fee to pay (in lovelace)
 $max_fee = 200000;
 
@@ -62,10 +67,6 @@ try {
                     ListObject::create([
                         ByteStringObject::create($hash),
                         UnsignedIntegerObject::create(0)
-                    ]),
-                    ListObject::create([
-                        ByteStringObject::create($hash1),
-                        UnsignedIntegerObject::create(0)
                     ])
                 ])
                     
@@ -75,13 +76,8 @@ try {
                     ListObject::create([
                         ByteStringObject::create($wallet_receiver_1),
                         ListObject::create([
-                            UnsignedIntegerObject::create($output_data),
+                            UnsignedIntegerObject::create($amount_ada_1),
                             MapObject::create()
-                                ->add(ByteStringObject::create(hex2bin($ada_policyid)),
-                                    MapObject::create()
-                                        ->add(ByteStringObject::create('didits'),
-                                        UnsignedIntegerObject::create($amount_ada_1))    
-                                )
                                 ->add(ByteStringObject::create(hex2bin($native_policyid_2)),
                                     MapObject::create()
                                         ->add(ByteStringObject::create(hex2bin($native_assetname_1)),//'ASHIB'
@@ -93,13 +89,8 @@ try {
                     ListObject::create([
                         ByteStringObject::create($wallet_receiver_2),
                         ListObject::create([
-                            UnsignedIntegerObject::create($output_data),
+                            UnsignedIntegerObject::create($amount_ada_2),
                             MapObject::create()
-                                ->add(ByteStringObject::create(hex2bin($ada_policyid)),
-                                    MapObject::create()
-                                        ->add(ByteStringObject::create('didits'),
-                                        UnsignedIntegerObject::create($amount_ada_2))    
-                                )
                                 ->add(ByteStringObject::create(hex2bin($native_policyid_2)),
                                     MapObject::create()
                                         ->add(ByteStringObject::create(hex2bin($native_assetname_2)),
@@ -113,7 +104,7 @@ try {
                                 
             )
             ->add(UnsignedIntegerObject::create(2), 
-                UnsignedIntegerObject::createFromHex('0')
+                UnsignedIntegerObject::createFromHex($max_fee)
             )
             ->add(UnsignedIntegerObject::create(3), 
                 UnsignedIntegerObject::createFromHex('07b8db1f')
@@ -133,7 +124,7 @@ try {
         'hash' => "2403c466054d9785c78d732d13ef5825de47280525ac05e3dfd52de7f4b1b690",
         "cborHex" => $tx
     ]);
-    
+
     $filename = 'sendADA.json';
     file_put_contents($filename, $content);
     echo "File created: " . $filename;
