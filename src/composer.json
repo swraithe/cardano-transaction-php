@@ -6,7 +6,10 @@
 	
 	"require" : {
 		"guzzlehttp/guzzle" : "^7.0",
-		"spomky-labs/cbor-php": "v2.1.x-dev"
+		"spomky-labs/cbor-php": "v2.1.x-dev",
+		"stephenhill/base58": "~1.0",
+		"andkom/php-bitcoin-address": "dev-master",
+		"bitwasp/bech32": "^0.0.1"
 	},
 	"autoload" : {
 		"psr-4" : {

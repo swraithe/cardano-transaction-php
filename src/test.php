@@ -19,6 +19,12 @@ use CBOR\NegativeIntegerObject;
 use CBOR\OtherObject\TrueObject;
 use CBOR\OtherObject\NullObject;
 
+use function BitWasp\Bech32\decodeSegwit;
+use function BitWasp\Bech32\decodeRaw;
+use function BitWasp\Bech32\convertBits;
+
+$base58 = new StephenHill\Base58();
+
 $projectId = "mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50";
 $addressService = new AddressesService(Service::$NETWORK_CARDANO_MAINNET, $projectId);
 
@@ -28,18 +34,25 @@ $addressService = new AddressesService(Service::$NETWORK_CARDANO_MAINNET, $proje
 // $res = $addressService->getAddressTransactions($wallet_sender);
 // echo $res->hash;
 
-
 //full wallet addres sender
 $wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
 $hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//
 // $hash = hex2bin('6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72');//
+// $res = $addressService->getAddress($wallet_sender);
+// var_dump($res);
+
+$cardanoAddress = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
+$decoded = decodeRaw($cardanoAddress);
+var_dump( $decoded[1]);
 
 //max transaction fee to pay (in lovelace)
 $max_fee = 200000;
 
 $ada_policyid = 'b24a29b9c16d349df16d9b5553b119e399e46ae19d6150c1a843ef61';
-//full wallet addres receiver #1
+//full wallet addres receiver #1 addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz
 $wallet_receiver_1 = hex2bin("01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0");
+var_dump($wallet_receiver_1);
+
 //amount ada to send (in lovelace) to receiver #1
 $amount_ada_1 = 1500000;
 //info about native token which also need to be send to receiver #1

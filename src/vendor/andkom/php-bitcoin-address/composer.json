@@ -1,0 +1,35 @@
+{
+    "name": "andkom/php-bitcoin-address",
+    "description": "A simple P2PK, P2PKH, P2SH, P2WPKH, P2WSH output script/address generator.",
+    "type": "library",
+    "keywords": [
+        "bitcoin",
+        "address",
+        "generator"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrei Komarov"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "stephenhill/base58": "^1.1",
+        "bitwasp/bech32": "^0.0.1",
+        "btccom/cashaddress": "^0.0.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "AndKom\\Bitcoin\\Address\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AndKom\\Bitcoin\\Address\\Tests\\": "tests/"
+        }
+    }
+}
