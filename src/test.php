@@ -4,9 +4,6 @@
 require 'vendor/autoload.php';
 // include_once('simple_html_dom.php');
 
-use Blockfrost\Block\BlockService;
-use Blockfrost\Address\AddressesService;
-use Blockfrost\Service;
 use CBOR\StringStream;
 use CBOR\Decoder;
 use CBOR\ListObject; // List
@@ -21,65 +18,45 @@ use CBOR\OtherObject\TrueObject;
 use CBOR\OtherObject\NullObject;
 use GuzzleHttp\Client;
 
-use function BitWasp\Bech32\decodeSegwit;
-use function BitWasp\Bech32\decodeRaw;
-use function BitWasp\Bech32\convertBits;
-
-// $base58 = new StephenHill\Base58();
-
-$projectId = "mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50";
-$addressService = new AddressesService(Service::$NETWORK_CARDANO_MAINNET, $projectId);
-
 function getHexAddress($wallet_address) {
-    $hex_address = '8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96';
-    // Replace 'your_api_key' with your actual Blockfrost API key
-    $api_key = 'mainnetUDnbDwWOmDkgbipZiRlT63FqZg8ELo50';
+    $hex_address = '01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0';
+   
+    $url = "https://cardanoscan.io/address/" . $wallet_address;
 
-    // Replace 'your_wallet_address' with the desired Cardano wallet address
-    $wallet_address = 'your_wallet_address';
+    $httpClient = new \GuzzleHttp\Client();
+    $response = $httpClient->get($url);
+    $htmlString = (string) $response->getBody();
+    //add this line to suppress any warnings
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument();
+    $doc->loadHTML($htmlString);
+    $xpath = new DOMXPath($doc);
 
-    // Build the API endpoint URL
-    $api_base_url = 'https://cardano-mainnet.blockfrost.io/api/v0';
-    $endpoint = "/addresses/{$wallet_address}";
-
-    // Make the HTTP request to the Blockfrost API
-    $client = new \GuzzleHttp\Client(['base_uri' => $api_base_url]);
-    $response = $client->request('GET', $endpoint, [
-        'headers' => [
-        'project_id' => $api_key,
-        ],
-    ]);
-
-    // Process the API response
-    if ($response->getStatusCode() === 200) {
-        $data = json_decode($response->getBody(), true);
-        $hex_address = $data['hex'];
-        echo "Hex address: " . $hex_address;
-    } else {
-         echo "Error fetching the address.";
+    $titles = $xpath->evaluate('//span[@class="break-all"]');
+   
+    if(count($titles) > 0){
+        $hex_address = $titles[0]->textContent;//.PHP_EOL;
+        echo $hex_address;
     }
-    return $hex_address;
+    
+    return hex2bin($hex_address);
 }
-// echo file_get_html('https://www.google.com/')->plaintext;
 
-//full wallet addres sender
-$wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
-$hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//
-// $hash = hex2bin('6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72');//
-// $res = $addressService->getAddress($wallet_sender);
-// var_dump($res);
-
+// testing scraping;
 $cardanoAddress = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
 $hex_address = getHexAddress($cardanoAddress);
 var_dump($hex_address);
 
+//full wallet addres sender
+$wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
+$hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//
 
 //max transaction fee to pay (in lovelace)
 $max_fee = 200000;
 
 $ada_policyid = 'b24a29b9c16d349df16d9b5553b119e399e46ae19d6150c1a843ef61';
 //full wallet addres receiver #1 addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz
-$wallet_receiver_1 = hex2bin("01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0");
+$wallet_receiver_1 = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
 var_dump($wallet_receiver_1);
 
 //amount ada to send (in lovelace) to receiver #1
@@ -91,8 +68,7 @@ $native_assetname_1 = "4153484942";
 $amount_native_1 = 250000;
 
 //full wallet addres receiver #2
-$wallet_receiver_2 = hex2bin("01e1bc3d27cbf0258e014cb6abd72348cb9c5e393e3ac6a3b50244c781300eb28ee276fd4e36acdcc468f781bbffcebe62ab3914013d88f3a0");
-//amount ada to send (in lovelace) to receiver #2
+$wallet_receiver_2 = "addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch";
 $amount_ada_2 = 1500000;
 //info about native token which also need to be send to receiver #2
 $native_policyid_2 = 'c68307e7ca850513507f1498862a57c7f4fae7ba8e84b8bc074093a9';
@@ -116,7 +92,7 @@ try {
             ->add(UnsignedIntegerObject::create(1), 
                 ListObject::create([
                     ListObject::create([
-                        ByteStringObject::create($wallet_receiver_1),
+                        ByteStringObject::create(getHexAddress($wallet_receiver_1)),
                         ListObject::create([
                             UnsignedIntegerObject::create($amount_ada_1),
                             MapObject::create()
@@ -129,7 +105,7 @@ try {
                         ])
                     ]),
                     ListObject::create([
-                        ByteStringObject::create($wallet_receiver_2),
+                        ByteStringObject::create(getHexAddress($wallet_receiver_2)),
                         ListObject::create([
                             UnsignedIntegerObject::create($amount_ada_2),
                             MapObject::create()
