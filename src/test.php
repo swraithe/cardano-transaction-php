@@ -41,6 +41,30 @@ function getHexAddress($wallet_address) {
     
     return hex2bin($hex_address);
 }
+function getTxHash($wallet_address) {
+    $txHash = '8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96';
+   
+    $url = "https://cardanoscan.io/address/" . $wallet_address;
+
+    $httpClient = new \GuzzleHttp\Client();
+    $response = $httpClient->get($url);
+    $htmlString = (string) $response->getBody();
+    //add this line to suppress any warnings
+    libxml_use_internal_errors(true);
+    $doc = new DOMDocument();
+    $doc->loadHTML($htmlString);
+    $xpath = new DOMXPath($doc);
+
+    $titles = $xpath->evaluate('//a[@class="link font-medium"]');
+   
+    if(count($titles) > 0){
+        // $txHash = $titles[0]->textContent;//.PHP_EOL;
+        $txHash = $titles[0]->getAttribute('data-tooltip');//.PHP_EOL;
+        echo $txHash .PHP_EOL;
+    }
+    
+    return hex2bin($txHash);
+}
 
 // testing scraping;
 $cardanoAddress = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
@@ -48,8 +72,9 @@ $hex_address = getHexAddress($cardanoAddress);
 // var_dump($hex_address);
 
 //full wallet addres sender
-$wallet_sender = 'addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch';
-$hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//
+$wallet_sender = 'addr1qyzm2mqvfvrudvdclppxa0cyhv35ajcdh7e5cfpgmpsgag8zwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxsjeuwma';
+// $hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96
+$hash = getTxHash($wallet_sender);//6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72
 
 //max transaction fee to pay (in lovelace)
 $max_fee = 200000;
