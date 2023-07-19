@@ -61,6 +61,8 @@ function getTxHash($wallet_address) {
         // $txHash = $titles[0]->textContent;//.PHP_EOL;
         $txHash = $titles[1]->getAttribute('data-tooltip');//.PHP_EOL; // second
         echo $txHash .PHP_EOL;
+    } else {
+        echo "can not find hash" .PHP_EOL;
     }
     
     return hex2bin($txHash);
