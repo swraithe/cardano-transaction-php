@@ -59,7 +59,7 @@ function getTxHash($wallet_address) {
    
     if(count($titles) > 0){
         // $txHash = $titles[0]->textContent;//.PHP_EOL;
-        $txHash = $titles[0]->getAttribute('data-tooltip');//.PHP_EOL;
+        $txHash = $titles[1]->getAttribute('data-tooltip');//.PHP_EOL; // second
         echo $txHash .PHP_EOL;
     }
     
@@ -72,8 +72,8 @@ $hex_address = getHexAddress($cardanoAddress);
 // var_dump($hex_address);
 
 //full wallet addres sender
-$wallet_sender = 'addr1qyzm2mqvfvrudvdclppxa0cyhv35ajcdh7e5cfpgmpsgag8zwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxsjeuwma';
-// $hash = hex2bin("8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96");//8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96
+$wallet_sender = 'addr1q8p44h8s0a5dyhujzwkn4a6xgmnywsdxjrmctu84m63su2mfdl20dlsvkqpx3xc2pg2xwuu6su06lc92g9q5m7aff25q4dhhn8';
+// $hash = hex2bin("edeada2d98c1b8f9d23f8cb717b919ef403e9e9b0bb45998ee0e081f5dc93910");//8c56a6d5df6823b13f1ee55473f44ded96ed841481d797e36b174c2267e48d96
 $hash = getTxHash($wallet_sender);//6581b1a1706fa649630094912e4e66d61eaaeec50a9d5574dfc730f0afbd2b72
 
 //max transaction fee to pay (in lovelace)
@@ -81,24 +81,24 @@ $max_fee = 200000;
 
 $ada_policyid = 'b24a29b9c16d349df16d9b5553b119e399e46ae19d6150c1a843ef61';
 //full wallet addres receiver #1 addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz
-$wallet_receiver_1 = 'addr1q8smc0f8e0cztrspfjm2h4erfr9ech3e8cavdga4qfzv0qfsp6egacnkl48rdtxuc3500qdmll8tuc4t8y2qz0vg7wsqgfqgmz';
+$wallet_receiver_1 = 'addr1q896vxce2ayhv85xd7dw762z0h7tyxsz0elwj0muynguuxkc2lurxzuh5w2jhe9wvt6d728j7590cjemm8mnt8tetngqjm8jcs';
 
 //amount ada to send (in lovelace) to receiver #1
 $amount_ada_1 = 1500000;
 //info about native token which also need to be send to receiver #1
-$native_policyid_1 = 'afc910d7a306d20c12903979d4935ae4307241d03245743548e76783';
+$native_policyid_1 = '438514ae1beb020d35e5389993447cea29637d6272c918017988ef36';
 $native_assetname_1 = "4153484942";
 //amount of native token that has to be send to receiver #1
-$amount_native_1 = 250000;
+$amount_native_1 = 50000000;
 
 //full wallet addres receiver #2
-$wallet_receiver_2 = "addr1qyzuvvmnewkpw8ywp64m8kz62sl2xsdxx778euvulzyu2rhzwrwl09qmj3lekd8nhzrrq8dja9hjakjtz0uqq9zlmaxshh5sch";
+$wallet_receiver_2 = "addr1q97hf0s8m4x8wtmp6azayjtvszwj0f25pnvys53zhfv25qyngsaxjf39m25h3f0x3md6cxqlppqxyeu742d7g4q2cc6q09v639";
 $amount_ada_2 = 1500000;
 //info about native token which also need to be send to receiver #2
-$native_policyid_2 = 'c68307e7ca850513507f1498862a57c7f4fae7ba8e84b8bc074093a9';
-$native_assetname_2 = "44494253";
+$native_policyid_2 = '438514ae1beb020d35e5389993447cea29637d6272c918017988ef36';
+$native_assetname_2 = "4153484942";
 //amount of native token that has to be send to receiver #2
-$amount_native_2 = 253000;
+$amount_native_2 = 70000000;
 
 try {
 
@@ -146,7 +146,7 @@ try {
                                 
             )
             ->add(UnsignedIntegerObject::create(2), 
-                UnsignedIntegerObject::createFromHex($max_fee)
+                UnsignedIntegerObject::create($max_fee)
             )
             ->add(UnsignedIntegerObject::create(3), 
                 UnsignedIntegerObject::createFromHex('07b8db1f')
